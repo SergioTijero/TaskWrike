@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "wrike-kanban",
+  "productName": "TaskWrike",
   "version": "0.1.0",
   "identifier": "com.sergiotijero.taskwrike",
   "build": {
