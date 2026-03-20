@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { getWrikeRedirectUri, isTauriDesktopRuntime } from '../utils/wrikeAuth';
+import { useNavigate } from 'react-router-dom';
+import { getWrikeRedirectUri } from '../utils/wrikeAuth';
 
 const OAuthCallback: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [statusText, setStatusText] = useState("Conectando con Wrike...");
     const [statusDesc, setStatusDesc] = useState("Validando tus credenciales");
     const [isError, setIsError] = useState(false);
 
     useEffect(() => {
+        const clearOAuthQuery = () => {
+            const nextUrl = `${window.location.pathname}${window.location.hash || '#/login'}`;
+            window.history.replaceState({}, document.title, nextUrl);
+        };
+
         const handleCallback = async () => {
-            const searchParams = new URLSearchParams(location.search);
+            const searchParams = new URLSearchParams(window.location.search);
             const code = searchParams.get('code');
             const error = searchParams.get('error');
 
@@ -65,34 +69,12 @@ const OAuthCallback: React.FC = () => {
                         if (data.host) {
                             localStorage.setItem('wrike_host', data.host);
                         }
+                        clearOAuthQuery();
                         window.dispatchEvent(new Event('storage'));
                         window.dispatchEvent(new Event('auth-change'));
 
-                        if (isTauriDesktopRuntime()) {
-                            try {
-                                const [{ emit }, { getCurrentWebviewWindow }] = await Promise.all([
-                                    import('@tauri-apps/api/event'),
-                                    import('@tauri-apps/api/webviewWindow'),
-                                ]);
-
-                                await emit('wrike-auth-success');
-                                const currentWindow = getCurrentWebviewWindow();
-
-                                if (currentWindow.label === 'wrike-oauth') {
-                                    setStatusText('Login exitoso');
-                                    setStatusDesc('Volviendo a la app principal...');
-                                    setTimeout(() => {
-                                        void currentWindow.close();
-                                    }, 500);
-                                    return;
-                                }
-                            } catch (eventError) {
-                                console.error('No se pudo sincronizar el login entre ventanas', eventError);
-                            }
-                        }
-
                         setTimeout(() => {
-                           navigate('/dashboard');
+                           navigate('/dashboard', { replace: true });
                         }, 500);
                     } else {
                         const errorMsg = "Wrike dice: " + (data.error_description || data.error || "Error desconocido");
@@ -111,12 +93,19 @@ const OAuthCallback: React.FC = () => {
                 }
             } else {
                 console.log("No se encontró código en la URL, redirigiendo a login...");
-                navigate('/login');
+                clearOAuthQuery();
+                navigate('/login', { replace: true });
             }
         };
 
         handleCallback();
-    }, [location, navigate]);
+    }, [navigate]);
+
+    const handleRetry = () => {
+        const nextUrl = `${window.location.pathname}#/login`;
+        window.history.replaceState({}, document.title, nextUrl);
+        navigate('/login', { replace: true });
+    };
 
     return (
         <div className="flex h-screen items-center justify-center bg-surface">
@@ -131,7 +120,7 @@ const OAuthCallback: React.FC = () => {
                 <h2 className="text-xl font-bold text-on-surface">{statusText}</h2>
                 <p className="text-on-surface-variant max-w-sm mt-2 font-medium">{statusDesc}</p>
                 {isError && (
-                    <button onClick={() => navigate('/login')} className="mt-6 font-bold bg-surface-container-highest px-6 py-2 rounded-lg hover:bg-surface-variant transition-colors">Volver y Reintentar</button>
+                    <button onClick={handleRetry} className="mt-6 font-bold bg-surface-container-highest px-6 py-2 rounded-lg hover:bg-surface-variant transition-colors">Volver y Reintentar</button>
                 )}
             </div>
         </div>

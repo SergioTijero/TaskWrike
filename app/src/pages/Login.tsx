@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../contexts/AppContext';
-import { getWrikeRedirectUri, isTauriDesktopRuntime } from '../utils/wrikeAuth';
+import { getWrikeAuthorizeUrl } from '../utils/wrikeAuth';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -10,27 +10,18 @@ const Login: React.FC = () => {
     const [manualHost, setManualHost] = React.useState('www.wrike.com');
     const [manualError, setManualError] = React.useState('');
     const [isSavingToken, setIsSavingToken] = React.useState(false);
-
-    const redirectUri = getWrikeRedirectUri();
-    const currentHost = window.location.hostname;
-    const isLocalRuntime = currentHost === 'localhost' || currentHost === '127.0.0.1';
-    const redirectPointsToLocalhost = /:\/\/(localhost|127\.0\.0\.1)(:|\/)/.test(redirectUri);
-    const desktopOauthIsMisconfigured = !isTauriDesktopRuntime() && redirectPointsToLocalhost && !isLocalRuntime;
+    const clientId = import.meta.env.VITE_WRIKE_CLIENT_ID;
+    const hasOAuthConfig = !!clientId && clientId !== 'TU_CLIENT_ID_DE_WRIKE_AQUI';
+    const wrikeAuthUrl = hasOAuthConfig ? getWrikeAuthorizeUrl(clientId) : '';
 
     const copy = {
-        oauthHint: lang === 'es'
-            ? 'Esta build de escritorio sigue intentando volver a localhost despues del login. En release ese callback no existe, asi que OAuth no puede completar.'
-            : 'This desktop build still tries to return to localhost after login. In release that callback does not exist, so OAuth cannot finish.',
         oauthMissingConfig: lang === 'es'
             ? 'Falta configurar el Client ID de Wrike en esta build.'
             : 'This build is missing the Wrike Client ID configuration.',
-        oauthWindowError: lang === 'es'
-            ? 'No pude abrir la ventana de login de Wrike en la app de escritorio.'
-            : 'I could not open the Wrike login window in the desktop app.',
         tokenTitle: lang === 'es' ? 'Entrar con Permanent Token' : 'Sign in with Permanent Token',
         tokenSubtitle: lang === 'es'
-            ? 'Usalo en la app de escritorio mientras configuramos un callback OAuth real para produccion.'
-            : 'Use this in the desktop app while we wire a real production OAuth callback.',
+            ? 'Usalo como alternativa si OAuth falla en esta maquina.'
+            : 'Use this as a fallback if OAuth fails on this machine.',
         tokenLabel: lang === 'es' ? 'Permanent Token' : 'Permanent Token',
         tokenPlaceholder: lang === 'es' ? 'Pega tu token de Wrike...' : 'Paste your Wrike token...',
         hostLabel: lang === 'es' ? 'Host de Wrike' : 'Wrike host',
@@ -43,51 +34,6 @@ const Login: React.FC = () => {
         tokenInvalid: lang === 'es'
             ? 'Wrike rechazo el token o el host configurado.'
             : 'Wrike rejected the token or configured host.',
-    };
-
-    const handleOAuthLogin = async () => {
-        const clientId = import.meta.env.VITE_WRIKE_CLIENT_ID;
-
-        if (!clientId || clientId === 'TU_CLIENT_ID_DE_WRIKE_AQUI') {
-            setManualError(copy.oauthMissingConfig);
-            return;
-        }
-
-        if (desktopOauthIsMisconfigured) {
-            setManualError(copy.oauthHint);
-            return;
-        }
-
-        setManualError('');
-        const authUrl = `https://login.wrike.com/oauth2/authorize/v4?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}`;
-
-        if (isTauriDesktopRuntime()) {
-            try {
-                const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow');
-                const existingWindow = await WebviewWindow.getByLabel('wrike-oauth');
-                await existingWindow?.close();
-
-                const oauthWindow = new WebviewWindow('wrike-oauth', {
-                    url: authUrl,
-                    title: 'Wrike Login',
-                    width: 920,
-                    height: 760,
-                    center: true,
-                    focus: true,
-                    resizable: true,
-                });
-
-                void oauthWindow.once('tauri://error', () => {
-                    setManualError(copy.oauthWindowError);
-                });
-                return;
-            } catch (error) {
-                setManualError(error instanceof Error ? error.message : copy.oauthWindowError);
-                return;
-            }
-        }
-
-        window.location.href = authUrl;
     };
 
     const handleManualLogin = async () => {
@@ -159,17 +105,27 @@ const Login: React.FC = () => {
                 </div>
                 <div className="surface-container-highest glass-panel p-8 rounded-xl shadow-2xl shadow-on-surface/5 border border-white/20">
                     <div className="space-y-4">
-                        <button
-                            type="button"
-                            onClick={handleOAuthLogin}
-                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-primary-dim text-on-primary font-semibold py-3.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
-                        >
-                            <span className="material-symbols-outlined">login</span>
-                            <span>{lang === 'es' ? 'Entrar con Wrike' : 'Log in with Wrike'}</span>
-                        </button>
-                        {desktopOauthIsMisconfigured && (
+                        {hasOAuthConfig ? (
+                            <a
+                                href={wrikeAuthUrl}
+                                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-primary-dim text-on-primary font-semibold py-3.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
+                            >
+                                <span className="material-symbols-outlined">login</span>
+                                <span>{lang === 'es' ? 'Entrar con Wrike' : 'Log in with Wrike'}</span>
+                            </a>
+                        ) : (
+                            <button
+                                type="button"
+                                disabled
+                                className="w-full flex items-center justify-center gap-3 bg-surface-container-low text-on-surface/40 font-semibold py-3.5 px-6 rounded-lg border border-outline-variant/10 cursor-not-allowed"
+                            >
+                                <span className="material-symbols-outlined">login</span>
+                                <span>{lang === 'es' ? 'Entrar con Wrike' : 'Log in with Wrike'}</span>
+                            </button>
+                        )}
+                        {!hasOAuthConfig && (
                             <div className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-xs font-medium text-amber-900">
-                                {copy.oauthHint}
+                                {copy.oauthMissingConfig}
                             </div>
                         )}
                         <button type="button" disabled className="w-full flex items-center justify-center gap-3 bg-surface-container-lowest text-on-surface/40 font-semibold py-3.5 px-6 rounded-lg border border-outline-variant/10 cursor-not-allowed grayscale transition-all">

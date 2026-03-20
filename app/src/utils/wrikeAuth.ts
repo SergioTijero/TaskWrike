@@ -1,9 +1,7 @@
-export const isTauriDesktopRuntime = () => window.location.hostname === 'tauri.localhost';
-
 export const getWrikeRedirectUri = () => {
-  if (isTauriDesktopRuntime()) {
-    return `${window.location.origin}/oauth/callback`;
-  }
+  return `${window.location.origin}/`;
+};
 
-  return import.meta.env.VITE_WRIKE_REDIRECT_URI || `${window.location.origin}/oauth/callback`;
+export const getWrikeAuthorizeUrl = (clientId: string) => {
+  return `https://login.wrike.com/oauth2/authorize/v4?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(getWrikeRedirectUri())}`;
 };

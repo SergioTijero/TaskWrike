@@ -71,18 +71,18 @@ Fill in your Wrike credentials:
 ```env
 VITE_WRIKE_CLIENT_ID=your_client_id
 VITE_WRIKE_CLIENT_SECRET=your_client_secret
-VITE_WRIKE_REDIRECT_URI=http://localhost:5173/oauth/callback
 # Optional: skip OAuth during development
 VITE_WRIKE_PERMANENT_TOKEN=your_permanent_token
 ```
 
-For desktop releases built with Tauri, the OAuth callback should be:
+Register these redirect URIs in your Wrike app:
 
 ```text
-https://tauri.localhost/oauth/callback
+http://localhost:5173/
+https://tauri.localhost/
 ```
 
-That redirect URI can stay public in CI. Only the client ID and client secret need to remain private.
+Those redirect URIs can stay public in CI because the app now derives them from the runtime origin. Only the client ID and client secret need to remain private.
 
 > **Where to get these:** [Wrike API Apps](https://www.wrike.com/frontend/apps/index.html) → Create new app → OAuth 2.0
 
