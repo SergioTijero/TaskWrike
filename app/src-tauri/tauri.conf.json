@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "wrike-kanban",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.sergiotijero.taskwrike",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "Wrike Kanban Viewer",
+        "title": "TaskWrike",
         "width": 800,
         "height": 600,
         "resizable": true,

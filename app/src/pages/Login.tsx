@@ -4,7 +4,7 @@ import { useApp } from '../contexts/AppContext';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    const { t, lang, setLang } = useApp();
+    const { lang, setLang } = useApp();
 
 
 
