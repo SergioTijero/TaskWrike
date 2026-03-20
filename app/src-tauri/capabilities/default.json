@@ -3,10 +3,13 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": [
-    "main"
+    "main",
+    "wrike-oauth"
   ],
   "permissions": [
     "core:default",
-    "http:default"
+    "http:default",
+    "core:webview:allow-create-webview-window",
+    "core:window:allow-close"
   ]
 }
