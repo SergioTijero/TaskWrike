@@ -34,7 +34,8 @@
       "icons/icon.ico"
     ],
     "macOS": {
-      "hardenedRuntime": true
+      "hardenedRuntime": true,
+      "providerShortName": "79TSQWKPU4"
     }
   }
 }
