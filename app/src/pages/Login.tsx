@@ -1,75 +1,26 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useApp } from '../contexts/AppContext';
 import { getWrikeAuthorizeUrl } from '../utils/wrikeAuth';
+import { clearWrikeSessionCookies } from '../services/wrikeSession';
 
 const Login: React.FC = () => {
-    const navigate = useNavigate();
     const { lang, setLang } = useApp();
-    const [manualToken, setManualToken] = React.useState('');
-    const [manualHost, setManualHost] = React.useState('www.wrike.com');
-    const [manualError, setManualError] = React.useState('');
-    const [isSavingToken, setIsSavingToken] = React.useState(false);
     const clientId = import.meta.env.VITE_WRIKE_CLIENT_ID;
     const hasOAuthConfig = !!clientId && clientId !== 'TU_CLIENT_ID_DE_WRIKE_AQUI';
     const wrikeAuthUrl = hasOAuthConfig ? getWrikeAuthorizeUrl(clientId) : '';
+
+    const handleWrikeLogin = async () => {
+        await clearWrikeSessionCookies(localStorage.getItem('wrike_host'));
+        window.location.assign(wrikeAuthUrl);
+    };
 
     const copy = {
         oauthMissingConfig: lang === 'es'
             ? 'Falta configurar el Client ID de Wrike en esta build.'
             : 'This build is missing the Wrike Client ID configuration.',
-        tokenTitle: lang === 'es' ? 'Entrar con Permanent Token' : 'Sign in with Permanent Token',
-        tokenSubtitle: lang === 'es'
-            ? 'Usalo como alternativa si OAuth falla en esta maquina.'
-            : 'Use this as a fallback if OAuth fails on this machine.',
-        tokenLabel: lang === 'es' ? 'Permanent Token' : 'Permanent Token',
-        tokenPlaceholder: lang === 'es' ? 'Pega tu token de Wrike...' : 'Paste your Wrike token...',
-        hostLabel: lang === 'es' ? 'Host de Wrike' : 'Wrike host',
-        hostPlaceholder: 'www.wrike.com',
-        saveToken: lang === 'es' ? 'Guardar y entrar' : 'Save and continue',
-        savingToken: lang === 'es' ? 'Validando token...' : 'Validating token...',
-        tokenRequired: lang === 'es'
-            ? 'Necesito un Permanent Token para continuar.'
-            : 'A Permanent Token is required to continue.',
-        tokenInvalid: lang === 'es'
-            ? 'Wrike rechazo el token o el host configurado.'
-            : 'Wrike rejected the token or configured host.',
-    };
-
-    const handleManualLogin = async () => {
-        const token = manualToken.trim();
-        const host = manualHost.trim() || 'www.wrike.com';
-
-        if (!token) {
-            setManualError(copy.tokenRequired);
-            return;
-        }
-
-        setIsSavingToken(true);
-        setManualError('');
-
-        try {
-            const response = await fetch(`https://${host}/api/v4/contacts?me=true`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error(copy.tokenInvalid);
-            }
-
-            localStorage.setItem('wrike_access_token', token);
-            localStorage.setItem('wrike_host', host);
-            localStorage.removeItem('wrike_refresh_token');
-            window.dispatchEvent(new Event('storage'));
-            window.dispatchEvent(new Event('auth-change'));
-            navigate('/dashboard');
-        } catch (error) {
-            setManualError(error instanceof Error ? error.message : copy.tokenInvalid);
-        } finally {
-            setIsSavingToken(false);
-        }
+        oauthSubtitle: lang === 'es'
+            ? 'Conecta tu workspace de Wrike para entrar en la app de escritorio.'
+            : 'Connect your Wrike workspace to continue in the desktop app.',
     };
 
     return (
@@ -105,14 +56,18 @@ const Login: React.FC = () => {
                 </div>
                 <div className="surface-container-highest glass-panel p-8 rounded-xl shadow-2xl shadow-on-surface/5 border border-white/20">
                     <div className="space-y-4">
+                        <p className="text-sm text-on-surface-variant">
+                            {copy.oauthSubtitle}
+                        </p>
                         {hasOAuthConfig ? (
-                            <a
-                                href={wrikeAuthUrl}
+                            <button
+                                type="button"
+                                onClick={handleWrikeLogin}
                                 className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-primary-dim text-on-primary font-semibold py-3.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
                             >
                                 <span className="material-symbols-outlined">login</span>
                                 <span>{lang === 'es' ? 'Entrar con Wrike' : 'Log in with Wrike'}</span>
-                            </a>
+                            </button>
                         ) : (
                             <button
                                 type="button"
@@ -132,50 +87,6 @@ const Login: React.FC = () => {
                             <img alt="Google G logo for authentication" className="w-5 h-5 opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A" />
                             <span>Log in with Google (Soon)</span>
                         </button>
-                        <div className="my-2 h-px bg-outline-variant/20" />
-                        <div className="space-y-3">
-                            <div>
-                                <h2 className="text-sm font-bold text-on-surface">{copy.tokenTitle}</h2>
-                                <p className="mt-1 text-xs text-on-surface-variant">{copy.tokenSubtitle}</p>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="block text-[11px] font-bold uppercase tracking-wide text-on-surface-variant">
-                                    {copy.tokenLabel}
-                                </label>
-                                <input
-                                    type="password"
-                                    value={manualToken}
-                                    onChange={(event) => setManualToken(event.target.value)}
-                                    placeholder={copy.tokenPlaceholder}
-                                    className="w-full rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:border-primary"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="block text-[11px] font-bold uppercase tracking-wide text-on-surface-variant">
-                                    {copy.hostLabel}
-                                </label>
-                                <input
-                                    type="text"
-                                    value={manualHost}
-                                    onChange={(event) => setManualHost(event.target.value)}
-                                    placeholder={copy.hostPlaceholder}
-                                    className="w-full rounded-lg border border-outline-variant/20 bg-surface-container-lowest px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:border-primary"
-                                />
-                            </div>
-                            {manualError && (
-                                <div className="rounded-lg border border-error/20 bg-error/10 px-4 py-3 text-xs font-medium text-error">
-                                    {manualError}
-                                </div>
-                            )}
-                            <button
-                                type="button"
-                                onClick={handleManualLogin}
-                                disabled={isSavingToken}
-                                className="w-full rounded-lg bg-surface-container-low px-4 py-3 text-sm font-bold text-on-surface transition-colors hover:bg-surface-container disabled:cursor-wait disabled:opacity-60"
-                            >
-                                {isSavingToken ? copy.savingToken : copy.saveToken}
-                            </button>
-                        </div>
                     </div>
                 </div>
                 <div className="mt-8 flex flex-col items-center gap-4">

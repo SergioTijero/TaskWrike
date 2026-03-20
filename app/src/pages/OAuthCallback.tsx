@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getWrikeRedirectUri } from '../utils/wrikeAuth';
+import { persistWrikeAccountIdentity } from '../services/accountStorage';
 
 const OAuthCallback: React.FC = () => {
     const navigate = useNavigate();
@@ -66,9 +67,11 @@ const OAuthCallback: React.FC = () => {
                         console.log("Login Exitoso!", { has_token: !!data.access_token });
                         localStorage.setItem('wrike_access_token', data.access_token);
                         localStorage.setItem('wrike_refresh_token', data.refresh_token);
-                        if (data.host) {
-                            localStorage.setItem('wrike_host', data.host);
-                        }
+                        const resolvedHost = data.host || 'www.wrike.com';
+                        localStorage.setItem('wrike_host', resolvedHost);
+                        await persistWrikeAccountIdentity(data.access_token, resolvedHost).catch((error) => {
+                            console.warn('No se pudo guardar la identidad completa de la cuenta de Wrike', error);
+                        });
                         clearOAuthQuery();
                         window.dispatchEvent(new Event('storage'));
                         window.dispatchEvent(new Event('auth-change'));

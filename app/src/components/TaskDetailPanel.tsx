@@ -17,7 +17,7 @@ export default function TaskDetailPanel({ task, onClose }: Props) {
     if (!task) { setComments([]); setFullDescription(''); return; }
     if (task.isLocal) { setFullDescription(task.description || ''); return; }
 
-    const token = localStorage.getItem('wrike_access_token') || import.meta.env.VITE_WRIKE_PERMANENT_TOKEN;
+    const token = localStorage.getItem('wrike_access_token');
     const host  = localStorage.getItem('wrike_host') || 'www.wrike.com';
     const headers = { Authorization: `Bearer ${token}` };
 

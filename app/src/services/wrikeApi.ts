@@ -1,8 +1,7 @@
 // src/services/wrikeApi.ts
 
 export const fetchWrikeTasks = async () => {
-    // Check for token first
-    const token = localStorage.getItem('wrike_access_token') || import.meta.env.VITE_WRIKE_PERMANENT_TOKEN;
+    const token = localStorage.getItem('wrike_access_token');
     
     if (!token) {
         throw new Error("No authentication token available");
@@ -51,7 +50,7 @@ export const fetchWrikeTasks = async () => {
 
 // Also we should get user data just to show the avatar
 export const fetchWrikeUser = async () => {
-    const token = localStorage.getItem('wrike_access_token') || import.meta.env.VITE_WRIKE_PERMANENT_TOKEN;
+    const token = localStorage.getItem('wrike_access_token');
     if (!token) return null;
     const host = localStorage.getItem('wrike_host') || 'www.wrike.com';
 

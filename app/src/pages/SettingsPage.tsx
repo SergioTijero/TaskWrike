@@ -1,17 +1,14 @@
-import localforage from 'localforage';
 import Sidebar from '../components/Sidebar';
 import { useApp } from '../contexts/AppContext';
+import { logoutWrikeSession } from '../services/wrikeSession';
 
 export default function SettingsPage() {
   const { t, lang, setLang, theme, setTheme } = useApp();
   const s = t.settingsPage;
+  const appVersion = __APP_VERSION__;
 
   const handleLogout = async () => {
-    localStorage.removeItem('wrike_access_token');
-    localStorage.removeItem('wrike_host');
-    await localforage.clear();
-    window.dispatchEvent(new Event('storage'));
-    window.location.reload();
+    await logoutWrikeSession();
   };
 
   return (
@@ -110,7 +107,7 @@ export default function SettingsPage() {
 
             {/* Version */}
             <p className="text-center text-xs text-on-surface-variant/50">
-              {s.version} 0.1.0 — Wrike Kanban
+              {s.version} {appVersion} — Wrike Kanban
             </p>
           </div>
         </main>

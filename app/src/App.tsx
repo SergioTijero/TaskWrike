@@ -16,7 +16,7 @@ function App() {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('wrike_access_token') || import.meta.env.VITE_WRIKE_PERMANENT_TOKEN;
+      const token = localStorage.getItem('wrike_access_token');
       setIsAuthenticated(!!token && token !== 'undefined');
     };
     checkAuth();

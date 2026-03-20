@@ -13,7 +13,7 @@ export default function SpacesPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('wrike_access_token') || import.meta.env.VITE_WRIKE_PERMANENT_TOKEN;
+    const token = localStorage.getItem('wrike_access_token');
     const host   = localStorage.getItem('wrike_host') || 'www.wrike.com';
     if (!token) { navigate('/login'); return; }
 

@@ -17,6 +17,14 @@ import CreateTaskModal from '../components/CreateTaskModal';
 import TaskDetailPanel from '../components/TaskDetailPanel';
 import { fetchWrikeTasks, fetchWrikeUser } from '../services/wrikeApi';
 import { useApp } from '../contexts/AppContext';
+import {
+  ensureWrikeAccountIdentity,
+  getScopedBoardStateKey,
+  getScopedNotesKey,
+  LEGACY_BOARD_STATE_KEY,
+  LEGACY_NOTES_KEY,
+} from '../services/accountStorage';
+import { logoutWrikeSession } from '../services/wrikeSession';
 
 
 // Types
@@ -132,22 +140,70 @@ export default function Dashboard() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [userAvatar, setUserAvatar] = useState('');
   const [syncStatus, setSyncStatus] = useState<string>(() => t.waitingSync);
+  const [accountKey, setAccountKey] = useState<string | null>(null);
 
   useEffect(() => {
-    localforage.getItem<Record<string, TaskType[]>>('wrike_board_state').then(saved => {
-      if (saved && Object.keys(saved).length > 0) {
-        // Migrate old keys if needed
-        const migrated: Record<string, TaskType[]> = { PENDING: [], IN_PROGRESS: [], IN_REVIEW: [], DONE: [] };
-        migrated.PENDING     = saved['PENDING']     || [];
-        migrated.IN_PROGRESS = saved['IN_PROGRESS'] || [];
-        migrated.IN_REVIEW   = saved['IN_REVIEW']   || saved['REVIEW'] || [];
-        migrated.DONE        = saved['DONE']         || saved['COMPLETED'] || [];
-        setTasks(migrated);
+    let isMounted = true;
+
+    const initializeBoard = async () => {
+      const resolvedAccountKey = await ensureWrikeAccountIdentity().catch(() => null);
+      if (!isMounted) return;
+
+      setAccountKey(resolvedAccountKey);
+
+      if (resolvedAccountKey) {
+        const scopedBoardStateKey = getScopedBoardStateKey(resolvedAccountKey);
+        const scopedNotesKey = getScopedNotesKey(resolvedAccountKey);
+
+        let saved = await localforage.getItem<Record<string, TaskType[]>>(scopedBoardStateKey);
+        if (!saved) {
+          const legacyBoardState = await localforage.getItem<Record<string, TaskType[]>>(LEGACY_BOARD_STATE_KEY);
+          if (legacyBoardState) {
+            saved = legacyBoardState;
+            await localforage.setItem(scopedBoardStateKey, legacyBoardState);
+            await localforage.removeItem(LEGACY_BOARD_STATE_KEY);
+          }
+        }
+
+        if (saved && Object.keys(saved).length > 0) {
+          const migrated: Record<string, TaskType[]> = { PENDING: [], IN_PROGRESS: [], IN_REVIEW: [], DONE: [] };
+          migrated.PENDING     = saved['PENDING']     || [];
+          migrated.IN_PROGRESS = saved['IN_PROGRESS'] || [];
+          migrated.IN_REVIEW   = saved['IN_REVIEW']   || saved['REVIEW'] || [];
+          migrated.DONE        = saved['DONE']        || saved['COMPLETED'] || [];
+          if (isMounted) {
+            setTasks(migrated);
+          }
+        }
+
+        let savedNotes = await localforage.getItem<string>(scopedNotesKey);
+        if (!savedNotes) {
+          const legacyNotes = await localforage.getItem<string>(LEGACY_NOTES_KEY);
+          if (legacyNotes) {
+            savedNotes = legacyNotes;
+            await localforage.setItem(scopedNotesKey, legacyNotes);
+            await localforage.removeItem(LEGACY_NOTES_KEY);
+          }
+        }
+
+        if (isMounted && savedNotes) {
+          setNotes(savedNotes);
+        }
       }
+
+      fetchWrikeUser().then(user => {
+        if (!isMounted) return;
+        if (user?.avatarUrl) setUserAvatar(user.avatarUrl);
+      }).catch(() => {});
+
       handleSyncWrike();
-    });
-    localforage.getItem<string>('wrike_kanban_notes').then(n => { if (n) setNotes(n); });
-    fetchWrikeUser().then(user => { if (user?.avatarUrl) setUserAvatar(user.avatarUrl); }).catch(() => {});
+    };
+
+    void initializeBoard();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSyncWrike = async (isManual = false) => {
@@ -203,8 +259,15 @@ export default function Dashboard() {
   }, [isSyncing]);
 
   // Persist state
-  useEffect(() => { localforage.setItem('wrike_board_state', tasks); }, [tasks]);
-  useEffect(() => { localforage.setItem('wrike_kanban_notes', notes); }, [notes]);
+  useEffect(() => {
+    if (!accountKey) return;
+    void localforage.setItem(getScopedBoardStateKey(accountKey), tasks);
+  }, [accountKey, tasks]);
+
+  useEffect(() => {
+    if (!accountKey) return;
+    void localforage.setItem(getScopedNotesKey(accountKey), notes);
+  }, [accountKey, notes]);
 
   // Local task creation
   const handleCreateTask = (task: TaskType) => {
@@ -260,11 +323,7 @@ export default function Dashboard() {
   };
 
   const handleLogout = async () => {
-    localStorage.removeItem('wrike_access_token');
-    localStorage.removeItem('wrike_host');
-    await localforage.clear();
-    window.dispatchEvent(new Event('storage'));
-    window.location.reload();
+    await logoutWrikeSession();
   };
 
   return (

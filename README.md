@@ -71,18 +71,23 @@ Fill in your Wrike credentials:
 ```env
 VITE_WRIKE_CLIENT_ID=your_client_id
 VITE_WRIKE_CLIENT_SECRET=your_client_secret
-# Optional: skip OAuth during development
-VITE_WRIKE_PERMANENT_TOKEN=your_permanent_token
 ```
 
 Register these redirect URIs in your Wrike app:
 
 ```text
 http://localhost:5173/
-https://tauri.localhost/
+http://localhost:9527/
 ```
 
-Those redirect URIs can stay public in CI because the app now derives them from the runtime origin. Only the client ID and client secret need to remain private.
+Register these CORS origins as well:
+
+```text
+http://localhost:5173
+http://localhost:9527
+```
+
+Those values can stay public in CI because the app now derives them from the runtime origin. Only the client ID and client secret need to remain private.
 
 > **Where to get these:** [Wrike API Apps](https://www.wrike.com/frontend/apps/index.html) → Create new app → OAuth 2.0
 
@@ -121,8 +126,9 @@ Output appears in `app/src-tauri/target/release/bundle/`:
 
 Each colleague needs their own Wrike connection. The easiest way for internal distribution:
 
-1. They generate a **Permanent Token** at `Wrike → Profile → Apps & Integrations → API Apps`
-2. Open **Settings → Wrike Account** in the app and paste it
+1. They install the desktop app
+2. They click **Entrar con Wrike**
+3. They sign in with their own Wrike account
 
 ---
 
