@@ -331,22 +331,22 @@ export default function Dashboard() {
       <Sidebar onCreateTask={() => setCreateOpen(true)} />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {/* Header */}
-        <header className="flex justify-between items-center px-6 py-3 w-full bg-slate-50 dark:bg-slate-900 border-b border-slate-200/20 z-10">
+        <header className="flex justify-between items-center px-6 py-3 w-full bg-surface-container-low/95 backdrop-blur-xl border-b border-outline-variant/25 z-10">
           <div className="flex items-center gap-8">
-            <span className="text-xl font-headline font-bold text-blue-700 dark:text-blue-400 tracking-tight">Wrike Kanban</span>
+            <span className="text-xl font-headline font-bold text-primary tracking-tight">Wrike Kanban</span>
           </div>
           <div className="flex items-center gap-3">
             <button onClick={() => setNotesOpen(!notesOpen)} title="Notas"
-              className="p-2 text-slate-500 hover:text-blue-600 transition-colors">
+              className="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-full transition-colors">
               <span className="material-symbols-outlined">sticky_note_2</span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-slate-200 overflow-hidden border border-slate-300">
+            <div className="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant/30">
               {userAvatar
                 ? <img src={userAvatar} className="w-full h-full object-cover" />
-                : <span className="material-symbols-outlined p-1 text-slate-500">person</span>}
+                : <span className="material-symbols-outlined p-1 text-on-surface-variant">person</span>}
             </div>
             <button onClick={handleLogout} title="Cerrar sesión"
-              className="p-2 text-red-400 hover:bg-red-100 rounded-full transition-colors">
+              className="p-2 text-error hover:bg-error-container/20 rounded-full transition-colors">
               <span className="material-symbols-outlined text-[20px]">logout</span>
             </button>
           </div>
@@ -389,12 +389,12 @@ export default function Dashboard() {
         </main>
 
         {/* Notes Panel */}
-        <div className={`absolute top-0 right-0 h-full w-80 bg-surface-container-lowest border-l border-slate-200/20 z-[60] shadow-2xl transition-transform duration-300 flex flex-col ${notesOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="p-4 border-b border-slate-200/20 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+        <div className={`absolute top-0 right-0 h-full w-80 bg-surface-container-lowest border-l border-outline-variant/25 z-[60] shadow-2xl transition-transform duration-300 flex flex-col ${notesOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="p-4 border-b border-outline-variant/25 flex items-center justify-between bg-surface-container-low">
             <h3 className="font-bold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-blue-600">sticky_note_2</span> Board Notes
+              <span className="material-symbols-outlined text-primary">sticky_note_2</span> Board Notes
             </h3>
-            <button onClick={() => setNotesOpen(false)} className="p-1 hover:bg-slate-200 rounded-full transition-colors">
+            <button onClick={() => setNotesOpen(false)} className="p-1 hover:bg-surface-variant rounded-full transition-colors">
               <span className="material-symbols-outlined">close</span>
             </button>
           </div>
@@ -402,15 +402,15 @@ export default function Dashboard() {
             <textarea className="w-full h-full bg-transparent border-none focus:ring-0 text-sm text-on-surface resize-none leading-relaxed"
               placeholder="Escribe notas persistentes aquí..." value={notes} onChange={e => setNotes(e.target.value)} />
           </div>
-          <div className="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200/20 text-[10px] text-on-surface-variant flex justify-between">
+          <div className="p-3 bg-surface-container-low border-t border-outline-variant/25 text-[10px] text-on-surface-variant flex justify-between">
             <span>Guardado localmente</span><span>{notes.length} chars</span>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="bg-blue-600/10 border-t border-blue-600/20 py-1.5 px-6 flex items-center justify-center gap-2 text-[11px] font-semibold text-blue-700 dark:text-blue-400">
+        <div className="bg-primary-container/18 border-t border-primary/15 py-1.5 px-6 flex items-center justify-center gap-2 text-[11px] font-semibold text-primary">
           <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
-          Solo lectura desde Wrike <span className="mx-2 text-slate-300">|</span>
+          Solo lectura desde Wrike <span className="mx-2 text-outline-variant">|</span>
           <span className="font-normal opacity-80">Los cambios de columna son solo visuales y no se escriben en Wrike.</span>
         </div>
       </div>

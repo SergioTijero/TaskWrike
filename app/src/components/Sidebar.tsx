@@ -21,16 +21,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateTask }) => {
   ];
 
   return (
-    <aside className={`${expanded ? 'w-56' : 'w-16'} hidden md:flex flex-col h-full bg-slate-100 dark:bg-slate-800/50 p-3 gap-1 border-r border-slate-200/20 z-40 transition-all duration-300 ease-in-out shrink-0`}>
+    <aside className={`${expanded ? 'w-56' : 'w-16'} hidden md:flex flex-col h-full bg-surface-container/95 backdrop-blur-xl p-3 gap-1 border-r border-outline-variant/25 z-40 transition-all duration-300 ease-in-out shrink-0`}>
       {/* Header */}
       <div className="flex items-center justify-between px-2 mb-4">
         {expanded && (
           <div className="overflow-hidden">
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white whitespace-nowrap">{t.appName}</h2>
-            <p className="text-[10px] text-slate-500">{t.readOnly}</p>
+            <h2 className="text-sm font-bold text-on-surface whitespace-nowrap">{t.appName}</h2>
+            <p className="text-[10px] text-on-surface-variant">{t.readOnly}</p>
           </div>
         )}
-        <button onClick={() => setExpanded(!expanded)} className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition-colors text-slate-500 ml-auto">
+        <button onClick={() => setExpanded(!expanded)} className="p-1.5 hover:bg-surface-container-high rounded-md transition-colors text-on-surface-variant ml-auto">
           <span className="material-symbols-outlined text-sm">{expanded ? 'chevron_left' : 'chevron_right'}</span>
         </button>
       </div>
@@ -50,8 +50,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateTask }) => {
             <button key={item.path} onClick={() => navigate(item.path)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all w-full text-left ${
                 isActive
-                  ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-sm font-bold'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/50'
+                  ? 'bg-primary-container/75 text-on-primary-container shadow-sm font-bold'
+                  : 'text-on-surface-variant hover:bg-surface-container-high'
               }`}>
               <span className="material-symbols-outlined text-[20px] shrink-0" style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}>
                 {item.icon}
@@ -63,9 +63,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onCreateTask }) => {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-slate-200/20 pt-2 flex flex-col gap-0.5 mt-2">
+      <div className="border-t border-outline-variant/25 pt-2 flex flex-col gap-0.5 mt-2">
         <button onClick={() => navigate('/settings')}
-          className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all w-full text-left ${location.pathname === '/settings' ? 'bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 font-bold' : 'text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700/50'}`}>
+          className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-all w-full text-left ${location.pathname === '/settings' ? 'bg-primary-container/75 text-on-primary-container font-bold' : 'text-on-surface-variant hover:bg-surface-container-high'}`}>
           <span className="material-symbols-outlined text-[20px] shrink-0">settings</span>
           {expanded && <span className="text-sm whitespace-nowrap">{t.settings}</span>}
         </button>

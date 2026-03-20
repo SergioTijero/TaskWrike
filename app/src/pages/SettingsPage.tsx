@@ -16,7 +16,7 @@ export default function SettingsPage() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex items-center gap-4 px-8 py-4 bg-slate-50 dark:bg-slate-900 border-b border-slate-200/20">
+        <header className="flex items-center gap-4 px-8 py-4 bg-surface-container-low/95 backdrop-blur-xl border-b border-outline-variant/25">
           <span className="material-symbols-outlined text-2xl text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>settings</span>
           <div>
             <h1 className="text-xl font-headline font-bold text-on-surface">{s.title}</h1>
@@ -112,7 +112,7 @@ export default function SettingsPage() {
           </div>
         </main>
 
-        <div className="bg-blue-600/10 border-t border-blue-600/20 py-1.5 px-6 flex items-center justify-center gap-2 text-[11px] font-semibold text-blue-700 dark:text-blue-400">
+        <div className="bg-primary-container/18 border-t border-primary/15 py-1.5 px-6 flex items-center justify-center gap-2 text-[11px] font-semibold text-primary">
           <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
           {t.readOnlyFooter}
         </div>

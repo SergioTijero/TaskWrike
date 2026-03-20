@@ -64,7 +64,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             
             <div className="flex items-center justify-between mt-auto pt-2">
                 {task.avatarUrl ? (
-                    <div className="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-slate-300">
+                    <div className="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-surface-variant">
                         <img className="w-full h-full rounded-full object-cover" alt="Avatar" src={task.avatarUrl} />
                     </div>
                 ) : (
