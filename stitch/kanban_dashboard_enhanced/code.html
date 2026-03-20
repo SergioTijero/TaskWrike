@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wrike Kanban Viewer - My Task Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#d8e3fb",
+              "tertiary": "#615b77",
+              "on-primary-fixed": "#003993",
+              "on-tertiary-fixed-variant": "#5c5672",
+              "on-secondary-fixed": "#354053",
+              "on-error": "#fff7f6",
+              "surface-container-low": "#f1f4f7",
+              "error-dim": "#4e0309",
+              "surface": "#f8f9fb",
+              "secondary": "#545f74",
+              "on-tertiary": "#fcf7ff",
+              "inverse-surface": "#0c0f10",
+              "on-tertiary-container": "#524c68",
+              "on-surface": "#2b3438",
+              "on-secondary-container": "#475266",
+              "on-secondary-fixed-variant": "#515c70",
+              "error": "#9f403d",
+              "primary-container": "#dae2ff",
+              "on-primary-fixed-variant": "#0253cd",
+              "on-tertiary-fixed": "#3f3a54",
+              "primary-fixed": "#dae2ff",
+              "surface-container": "#eaeef2",
+              "tertiary-container": "#e3dbfd",
+              "primary-fixed-dim": "#c6d3ff",
+              "inverse-primary": "#5c8bff",
+              "on-background": "#2b3438",
+              "on-primary": "#f8f7ff",
+              "on-error-container": "#752121",
+              "secondary-fixed": "#d8e3fb",
+              "primary-dim": "#004aba",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-dim": "#554f6b",
+              "surface-dim": "#d1dce2",
+              "primary": "#0c56d0",
+              "on-surface-variant": "#586065",
+              "background": "#f8f9fb",
+              "surface-container-highest": "#dbe4ea",
+              "secondary-fixed-dim": "#c9d5ed",
+              "outline-variant": "#aab3b9",
+              "surface-tint": "#0c56d0",
+              "error-container": "#fe8983",
+              "inverse-on-surface": "#9b9d9f",
+              "surface-bright": "#f8f9fb",
+              "outline": "#737c81",
+              "surface-container-high": "#e2e9ee",
+              "tertiary-fixed-dim": "#d5cdee",
+              "tertiary-fixed": "#e3dbfd",
+              "surface-variant": "#dbe4ea",
+              "on-secondary": "#f8f8ff",
+              "secondary-dim": "#485368",
+              "on-primary-container": "#004ab9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+        }
+        /* Custom sidebar transition and hidden states */
+        .sidebar-expanded { width: 16rem; }
+        .sidebar-collapsed { width: 4.5rem; }
+        .sidebar-collapsed .sidebar-text,
+        .sidebar-collapsed .sidebar-header-text,
+        .sidebar-collapsed .sidebar-footer-text { display: none; }
+        .sidebar-collapsed .sidebar-nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+        .sidebar-collapsed .sidebar-create-btn { width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 9999px; }
+        .sidebar-collapsed .sidebar-create-btn span:last-child { display: none; }
+        .sidebar-collapsed .sidebar-header { padding-left: 0; padding-right: 0; text-align: center; }
+        
+        /* Notes panel transitions */
+        .notes-panel-open { transform: translateX(0); }
+        .notes-panel-closed { transform: translateX(100%); }
+        
+        scrollbar-hide::-webkit-scrollbar { display: none; }
+        scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="sidebar-expanded hidden md:flex flex-col h-full bg-slate-100 dark:bg-slate-800/50 p-4 gap-2 border-r border-slate-200/20 z-40 transition-all duration-300 ease-in-out" id="sidebar">
+<div class="sidebar-header mb-6 px-4 flex items-center justify-between">
+<div class="sidebar-header-text overflow-hidden whitespace-nowrap">
+<h2 class="text-lg font-semibold text-slate-900 dark:text-white">Project Workspace</h2>
+<p class="text-xs text-on-surface-variant">Marketing Team</p>
+</div>
+<button class="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition-colors text-slate-500" onclick="toggleSidebar()">
+<span class="material-symbols-outlined" data-icon="chevron_left" id="collapse-icon">chevron_left</span>
+</button>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="sidebar-nav-item flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="sidebar-text font-medium text-sm whitespace-nowrap">Home</span>
+</a>
+<a class="sidebar-nav-item flex items-center gap-3 bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 rounded-lg px-4 py-2 shadow-sm transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="sidebar-text font-medium text-sm whitespace-nowrap">Spaces</span>
+</a>
+<a class="sidebar-nav-item flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="sidebar-text font-medium text-sm whitespace-nowrap">Dashboards</span>
+</a>
+<a class="sidebar-nav-item flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="sidebar-text font-medium text-sm whitespace-nowrap">Calendars</span>
+</a>
+<a class="sidebar-nav-item flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+<span class="sidebar-text font-medium text-sm whitespace-nowrap">Blueprints</span>
+</a>
+</nav>
+<button class="sidebar-create-btn mt-4 mx-2 bg-gradient-to-r from-primary to-primary-dim text-on-primary py-2.5 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-md hover:opacity-90 transition-all overflow-hidden whitespace-nowrap">
+<span class="material-symbols-outlined text-lg shrink-0" data-icon="add">add</span>
+<span class="sidebar-text">Create Task</span>
+</button>
+<div class="mt-auto border-t border-slate-200/20 pt-4 flex flex-col gap-1">
+<a class="sidebar-nav-item flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="sidebar-footer-text font-medium text-sm whitespace-nowrap">Help</span>
+</a>
+<a class="sidebar-nav-item flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+<span class="sidebar-footer-text font-medium text-sm whitespace-nowrap">Trash</span>
+</a>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-6 py-3 w-full bg-slate-50 dark:bg-slate-900 border-b border-slate-200/20 z-50 transition-transform duration-150">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-blue-700 dark:text-blue-400 tracking-tight">Wrike Kanban</span>
+<nav class="hidden md:flex gap-6">
+<a class="text-blue-700 dark:text-blue-400 font-bold border-b-2 border-blue-700 dark:border-blue-400 pb-1" href="#">My Tasks</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 transition-colors" href="#">Inbox</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 dark:hover:text-blue-300 transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4 flex-1 justify-end">
+<div class="relative max-w-xs w-full hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-1.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search tasks..." type="text"/>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-slate-500 hover:text-blue-600 transition-colors" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+<span class="material-symbols-outlined" data-icon="light_mode" id="dark-mode-icon">light_mode</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-blue-600 transition-colors" onclick="toggleNotes()" title="Open Notes">
+<span class="material-symbols-outlined" data-icon="sticky_note_2">sticky_note_2</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-blue-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-blue-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden ml-2 border border-slate-300">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Profile picture of a professional user" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 overflow-x-auto overflow-y-hidden p-8 flex flex-col gap-6 relative">
+<div class="flex justify-between items-end flex-wrap gap-4">
+<div>
+<h1 class="text-3xl font-extrabold text-on-surface tracking-tight mb-1">My Task Board</h1>
+<div class="flex items-center gap-3 text-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="group">group</span> 12 Contributors</span>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm" data-icon="update">update</span> Last sync: 2 mins ago</span>
+</div>
+</div>
+<button class="bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-sm">
+<span class="material-symbols-outlined text-lg" data-icon="sync">sync</span>
+                Sync with Wrike
+            </button>
+</div>
+<!-- Kanban Grid -->
+<div class="flex-1 flex gap-8 pb-4 min-h-0">
+<!-- Pendiente Column -->
+<div class="flex flex-col w-80 shrink-0 gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-bold text-lg text-on-surface">Pendiente</h3>
+<span class="bg-surface-variant px-2 py-0.5 rounded-full text-xs font-bold text-on-surface-variant">4</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 rounded-xl bg-surface-container-low p-3 scrollbar-hide">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-grab active:cursor-grabbing border border-transparent hover:border-primary/10">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold uppercase tracking-wider text-error bg-error-container/20 px-2 py-0.5 rounded-md">High</span>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-primary text-sm opacity-0 group-hover:opacity-100 transition-opacity" data-icon="drag_indicator">drag_indicator</span>
+</div>
+<h4 class="font-body font-bold text-on-surface text-sm mb-2 leading-tight">Q4 Content Strategy Deck</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 mb-4">Finalize the visual assets for the upcoming content push in the enterprise segment.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-slate-300">
+<img class="w-full h-full rounded-full object-cover" data-alt="Team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A"/>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-slate-300 flex items-center justify-center text-[8px] font-bold text-on-surface-variant">+2</div>
+</div>
+<div class="flex items-center gap-1 text-[10px] font-medium text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="calendar_today">calendar_today</span>
+                                Oct 24
+                            </div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-grab border border-transparent">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold uppercase tracking-wider text-on-secondary-container bg-secondary-container/50 px-2 py-0.5 rounded-md">Medium</span>
+</div>
+<h4 class="font-body font-bold text-on-surface text-sm mb-2 leading-tight">Social Media Audit</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 mb-4">Review engagement metrics across LinkedIn and X platforms.</p>
+<div class="flex items-center justify-between mt-auto">
+<div class="w-6 h-6 rounded-full bg-slate-300">
+<img class="w-full h-full rounded-full object-cover" data-alt="Team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiLGn95pMoeds82-8NAIoAxJgXFETJoW87Dpnu4JHb-JzidaUl7t7xFtZZjkqSNqegRpOFU7oTQmrAp3YQysCS1bCmn7a1nAFRIxJHp1hS70P2KuZjV5Ch3Kr53c2uTF8k5cEZe4g39D7Kwt6MrCCKgsLv78v5Q9a4mKPoxW1veINsWB5LuEhhUikqZoOlKaRIuzSQN0c73MSKuuUnehYKj98kl4CvZxWjZ2saAeSeyQFwEpnzoN_omWYwYcd5-eTNJmZR35Wa8YFb"/>
+</div>
+<div class="flex items-center gap-1 text-[10px] font-medium text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="calendar_today">calendar_today</span>
+                                Oct 28
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- En Proceso Column -->
+<div class="flex flex-col w-80 shrink-0 gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-bold text-lg text-on-surface">En Proceso</h3>
+<span class="bg-primary-container px-2 py-0.5 rounded-full text-xs font-bold text-on-primary-container">2</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 rounded-xl bg-surface-container-low p-3 scrollbar-hide">
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow group cursor-grab border border-transparent">
+<div class="flex justify-between items-start mb-2">
+<span class="text-[10px] font-bold uppercase tracking-wider text-error bg-error-container/20 px-2 py-0.5 rounded-md">High</span>
+</div>
+<h4 class="font-body font-bold text-on-surface text-sm mb-2 leading-tight">Brand Refresh Phase 1</h4>
+<div class="w-full bg-surface-container rounded-full h-1.5 mb-4 overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 65%;"></div>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<div class="flex -space-x-1">
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-slate-300">
+<img class="w-full h-full rounded-full object-cover" data-alt="Team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDulFXVXhA5cS5SqWgs1ojHqER_FZnITs4GCUkLtu7XMwUtBv8luYsVdig_3gyugIQVgiXj01qJvpXtxQBf9gdfziBzDyp9SN-kgLV76bJufiqG2dbaDP7HBSOagwlqRHJj9pMvNizEjmMNrip6YAOse1Uy6faE3N00XuwvTnI7294fvH8lGe4--_vrJrrPKukcwSi179l2e8AF-_ltahkOiNR1Dp3dUyE8UiNeOR-ig5Dc7sIZLExq5Ij3Pow9MtlOgcVI9E3no0oI"/>
+</div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-lowest bg-slate-300">
+<img class="w-full h-full rounded-full object-cover" data-alt="Team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-xs text-on-surface-variant" data-icon="attach_file">attach_file</span>
+<span class="text-[10px] font-medium text-on-surface-variant">Oct 20</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- En Revisión Column -->
+<div class="flex flex-col w-80 shrink-0 gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-bold text-lg text-on-surface">En Revisión</h3>
+<span class="bg-tertiary-container px-2 py-0.5 rounded-full text-xs font-bold text-on-tertiary-container">3</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 rounded-xl bg-surface-container-low p-3 scrollbar-hide">
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border-l-4 border-tertiary cursor-grab">
+<h4 class="font-body font-bold text-on-surface text-sm mb-2 leading-tight">API Documentation Updates</h4>
+<p class="text-xs text-on-surface-variant line-clamp-2 mb-4">Adding endpoints for the new SSO integration module.</p>
+<div class="flex items-center justify-between">
+<span class="text-[10px] font-bold text-on-tertiary-fixed-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="chat_bubble">chat_bubble</span> 5
+                            </span>
+<div class="w-6 h-6 rounded-full bg-slate-300">
+<img class="w-full h-full rounded-full object-cover" data-alt="Team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Finalizado Column -->
+<div class="flex flex-col w-80 shrink-0 gap-4">
+<div class="flex items-center justify-between px-2">
+<div class="flex items-center gap-2">
+<h3 class="font-headline font-bold text-lg text-on-surface">Finalizado</h3>
+<span class="bg-surface-container-highest px-2 py-0.5 rounded-full text-xs font-bold text-on-surface-variant">8</span>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 rounded-xl bg-surface-container-low p-3 opacity-70 hover:opacity-100 transition-opacity scrollbar-hide">
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm grayscale-0">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] font-bold text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-emerald-600" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span> 
+                                Done
+                            </span>
+</div>
+<h4 class="font-body font-bold text-on-surface text-sm mb-2 line-through decoration-on-surface-variant/30">Investor Report - Q3</h4>
+<div class="flex items-center justify-between mt-auto">
+<span class="text-[10px] font-medium text-on-surface-variant">Completed Oct 15</span>
+<div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px] text-on-surface-variant" data-icon="verified_user">verified_user</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Notes Side Panel -->
+<div class="absolute top-0 right-0 h-full w-80 bg-surface-container-lowest border-l border-slate-200/20 z-[60] shadow-2xl transition-transform duration-300 ease-in-out notes-panel-closed flex flex-col" id="notes-panel">
+<div class="p-4 border-b border-slate-200/20 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+<h3 class="font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-blue-600" data-icon="sticky_note_2">sticky_note_2</span>
+                Board Notes
+            </h3>
+<button class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors" onclick="toggleNotes()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="flex-1 p-4">
+<textarea class="w-full h-full bg-transparent border-none focus:ring-0 text-sm text-on-surface resize-none leading-relaxed" id="local-notes" placeholder="Type your persistent notes here..."></textarea>
+</div>
+<div class="p-3 bg-slate-50 dark:bg-slate-900 border-t border-slate-200/20 text-[10px] text-on-surface-variant flex items-center justify-between">
+<span>Saved locally</span>
+<span id="char-count">0 chars</span>
+</div>
+</div>
+<!-- Read-only status bar -->
+<div class="bg-blue-600/10 dark:bg-blue-400/10 border-t border-blue-600/20 py-1.5 px-6 flex items-center justify-center gap-2 text-[11px] font-semibold text-blue-700 dark:text-blue-400">
+<span class="material-symbols-outlined text-sm" data-icon="lock" style="font-variation-settings: 'FILL' 1;">lock</span>
+        Read-only from Wrike
+        <span class="mx-2 text-slate-300">|</span>
+<span class="font-normal opacity-80">Sync active. Changes are mirrored from source.</span>
+</div>
+</div>
+<!-- Mobile FAB -->
+<button class="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-primary text-on-primary shadow-2xl flex items-center justify-center z-50">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+<script>
+    // Sidebar toggle functionality
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const icon = document.getElementById('collapse-icon');
+        
+        if (sidebar.classList.contains('sidebar-expanded')) {
+            sidebar.classList.remove('sidebar-expanded');
+            sidebar.classList.add('sidebar-collapsed');
+            icon.innerText = 'chevron_right';
+        } else {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.classList.add('sidebar-expanded');
+            icon.innerText = 'chevron_left';
+        }
+    }
+
+    // Dark Mode toggle
+    function toggleDarkMode() {
+        const html = document.documentElement;
+        const icon = document.getElementById('dark-mode-icon');
+        if (html.classList.contains('dark')) {
+            html.classList.remove('dark');
+            html.classList.add('light');
+            icon.innerText = 'light_mode';
+        } else {
+            html.classList.remove('light');
+            html.classList.add('dark');
+            icon.innerText = 'dark_mode';
+        }
+    }
+
+    // Notes Panel toggle
+    function toggleNotes() {
+        const panel = document.getElementById('notes-panel');
+        if (panel.classList.contains('notes-panel-closed')) {
+            panel.classList.remove('notes-panel-closed');
+            panel.classList.add('notes-panel-open');
+        } else {
+            panel.classList.remove('notes-panel-open');
+            panel.classList.add('notes-panel-closed');
+        }
+    }
+
+    // Local persistent notes
+    const notesArea = document.getElementById('local-notes');
+    const charCount = document.getElementById('char-count');
+
+    // Load saved notes
+    window.addEventListener('load', () => {
+        const saved = localStorage.getItem('wrike_kanban_notes');
+        if (saved) {
+            notesArea.value = saved;
+            charCount.innerText = `${saved.length} chars`;
+        }
+    });
+
+    // Save notes on input
+    notesArea.addEventListener('input', (e) => {
+        localStorage.setItem('wrike_kanban_notes', e.target.value);
+        charCount.innerText = `${e.target.value.length} chars`;
+    });
+</script>
+</body></html>

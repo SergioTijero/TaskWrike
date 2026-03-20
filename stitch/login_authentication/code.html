@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign In to Your Workspace - Wrike Kanban</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#d8e3fb",
+              "tertiary": "#615b77",
+              "on-primary-fixed": "#003993",
+              "on-tertiary-fixed-variant": "#5c5672",
+              "on-secondary-fixed": "#354053",
+              "on-error": "#fff7f6",
+              "surface-container-low": "#f1f4f7",
+              "error-dim": "#4e0309",
+              "surface": "#f8f9fb",
+              "secondary": "#545f74",
+              "on-tertiary": "#fcf7ff",
+              "inverse-surface": "#0c0f10",
+              "on-tertiary-container": "#524c68",
+              "on-surface": "#2b3438",
+              "on-secondary-container": "#475266",
+              "on-secondary-fixed-variant": "#515c70",
+              "error": "#9f403d",
+              "primary-container": "#dae2ff",
+              "on-primary-fixed-variant": "#0253cd",
+              "on-tertiary-fixed": "#3f3a54",
+              "primary-fixed": "#dae2ff",
+              "surface-container": "#eaeef2",
+              "tertiary-container": "#e3dbfd",
+              "primary-fixed-dim": "#c6d3ff",
+              "inverse-primary": "#5c8bff",
+              "on-background": "#2b3438",
+              "on-primary": "#f8f7ff",
+              "on-error-container": "#752121",
+              "secondary-fixed": "#d8e3fb",
+              "primary-dim": "#004aba",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-dim": "#554f6b",
+              "surface-dim": "#d1dce2",
+              "primary": "#0c56d0",
+              "on-surface-variant": "#586065",
+              "background": "#f8f9fb",
+              "surface-container-highest": "#dbe4ea",
+              "secondary-fixed-dim": "#c9d5ed",
+              "outline-variant": "#aab3b9",
+              "surface-tint": "#0c56d0",
+              "error-container": "#fe8983",
+              "inverse-on-surface": "#9b9d9f",
+              "surface-bright": "#f8f9fb",
+              "outline": "#737c81",
+              "surface-container-high": "#e2e9ee",
+              "tertiary-fixed-dim": "#d5cdee",
+              "tertiary-fixed": "#e3dbfd",
+              "surface-variant": "#dbe4ea",
+              "on-secondary": "#f8f8ff",
+              "secondary-dim": "#485368",
+              "on-primary-container": "#004ab9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col">
+<main class="flex-grow flex items-center justify-center p-6 relative overflow-hidden">
+<div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+<div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary-container/20 rounded-full blur-[120px]"></div>
+<div class="absolute top-[20%] -right-[5%] w-[30%] h-[50%] bg-tertiary-container/30 rounded-full blur-[100px]"></div>
+<div class="absolute -bottom-[10%] left-[20%] w-[50%] h-[30%] bg-secondary-container/20 rounded-full blur-[120px]"></div>
+<div class="absolute inset-0 opacity-[0.03]" data-alt="Subtle geometric cube pattern background" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWNPrazCK92S1_r8XnjC5SixnYurZe-WzHTHvBA-80W7NYJnMm209ynXghSEUWg52_uET92TDTMADGYS9vP99gKtP3uG7KHe0qmdhbJU8L6xmFKp9PomNEzkU2PyhI8S1MsvFE1ssf4Ygwav17hl_6RScnvo_aHF9JjjOhXJjnngH0FC7OGJ9reyS43HU_mIGTNbKnGjRRZFEAAFVEmEQqzjZ7xcm27V1G8fDVsdb8UQeHnN_PMnoFDUAKNPPr6_8Z83Jrer4O99sG');"></div>
+</div>
+<div class="w-full max-w-md z-10">
+<div class="text-center mb-10">
+<div class="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-xl mb-6 shadow-xl shadow-primary/20">
+<span class="material-symbols-outlined text-on-primary text-4xl" data-icon="grid_view">grid_view</span>
+</div>
+<h1 class="font-headline font-extrabold text-3xl text-on-surface tracking-tight mb-2">Sign In to Your Workspace</h1>
+<p class="text-on-surface-variant font-medium">Wrike Kanban Viewer</p>
+</div>
+<div class="surface-container-highest glass-panel p-8 rounded-xl shadow-2xl shadow-on-surface/5 border border-white/20">
+<div class="space-y-4">
+<button class="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-primary to-primary-dim text-on-primary font-semibold py-3.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined" data-icon="login">login</span>
+<span>Log in with Wrike</span>
+</button>
+<button class="w-full flex items-center justify-center gap-3 bg-surface-container-lowest text-on-surface font-semibold py-3.5 px-6 rounded-lg shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-all active:scale-[0.98]">
+<img alt="" class="w-5 h-5" data-alt="Google G logo for authentication" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A"/>
+<span>Log in with Google</span>
+</button>
+</div>
+<div class="relative my-8 text-center">
+<div aria-hidden="true" class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant/30"></div>
+</div>
+<span class="relative px-4 bg-transparent text-on-surface-variant text-xs font-bold uppercase tracking-widest">or secure sign in</span>
+</div>
+<form class="space-y-5">
+<div>
+<label class="block text-sm font-semibold text-on-surface mb-1.5 ml-1" for="email">Work Email</label>
+<input class="w-full bg-surface-container-lowest border-0 border-b-2 border-outline-variant/20 focus:border-primary focus:ring-0 transition-all px-4 py-3 rounded-t-lg placeholder:text-outline-variant/60" id="email" name="email" placeholder="name@company.com" type="email"/>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1.5 ml-1">
+<label class="block text-sm font-semibold text-on-surface" for="password">Password</label>
+<a class="text-xs font-bold text-primary hover:text-primary-dim transition-colors" href="#">Forgot?</a>
+</div>
+<input class="w-full bg-surface-container-lowest border-0 border-b-2 border-outline-variant/20 focus:border-primary focus:ring-0 transition-all px-4 py-3 rounded-t-lg placeholder:text-outline-variant/60" id="password" name="password" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex items-center gap-2 ml-1">
+<input class="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" id="remember" type="checkbox"/>
+<label class="text-xs font-medium text-on-surface-variant" for="remember">Remember this device for 30 days</label>
+</div>
+<button class="w-full bg-secondary-container text-on-secondary-container font-bold py-3 px-6 rounded-lg hover:bg-secondary-fixed transition-colors" type="submit">
+                        Continue to Dashboard
+                    </button>
+</form>
+</div>
+<div class="mt-8 flex flex-col items-center gap-4">
+<div class="flex items-center gap-6 text-xs font-bold text-outline uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<span class="w-1 h-1 bg-outline-variant rounded-full"></span>
+<a class="hover:text-primary transition-colors" href="#">Security</a>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-sm" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="text-[10px] font-medium">Enterprise-grade 256-bit SSL Encryption</span>
+</div>
+</div>
+</div>
+<div class="hidden lg:block absolute bottom-12 right-12 max-w-xs p-5 bg-surface-container-low/40 rounded-xl border border-white/20 backdrop-blur-sm">
+<div class="flex items-center gap-3 mb-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container text-sm" data-icon="lightbulb">lightbulb</span>
+</div>
+<h3 class="font-headline font-bold text-sm text-on-surface">Pro Tip</h3>
+</div>
+<p class="text-xs text-on-surface-variant leading-relaxed">
+                Connect your Wrike account to automatically sync task metadata, custom fields, and real-time status updates directly to your Kanban view.
+            </p>
+</div>
+</main>
+<footer class="p-6 text-center text-[10px] font-bold text-outline-variant uppercase tracking-widest">
+        © 2024 Wrike Kanban Viewer. Azure Horizon Design System.
+    </footer>
+</body></html>

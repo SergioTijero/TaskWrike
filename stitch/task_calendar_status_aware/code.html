@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wrike Kanban Viewer - Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#dbe4ea",
+              "on-surface-variant": "#586065",
+              "surface-container-lowest": "#ffffff",
+              "on-secondary-container": "#475266",
+              "on-background": "#2b3438",
+              "on-secondary": "#f8f8ff",
+              "error-container": "#fe8983",
+              "primary": "#0c56d0",
+              "surface-bright": "#f8f9fb",
+              "primary-fixed": "#dae2ff",
+              "on-primary-fixed-variant": "#0253cd",
+              "primary-fixed-dim": "#c6d3ff",
+              "inverse-on-surface": "#9b9d9f",
+              "on-primary-fixed": "#003993",
+              "surface-variant": "#dbe4ea",
+              "on-primary-container": "#004ab9",
+              "secondary-container": "#d8e3fb",
+              "tertiary-container": "#e3dbfd",
+              "error": "#9f403d",
+              "surface-dim": "#d1dce2",
+              "on-error-container": "#752121",
+              "inverse-primary": "#5c8bff",
+              "outline": "#737c81",
+              "background": "#f8f9fb",
+              "tertiary-fixed": "#e3dbfd",
+              "surface-tint": "#0c56d0",
+              "secondary": "#545f74",
+              "primary-container": "#dae2ff",
+              "tertiary": "#615b77",
+              "on-secondary-fixed-variant": "#515c70",
+              "on-tertiary-fixed": "#3f3a54",
+              "on-tertiary-container": "#524c68",
+              "on-error": "#fff7f6",
+              "tertiary-fixed-dim": "#d5cdee",
+              "secondary-fixed-dim": "#c9d5ed",
+              "secondary-fixed": "#d8e3fb",
+              "on-tertiary-fixed-variant": "#5c5672",
+              "surface-container-high": "#e2e9ee",
+              "error-dim": "#4e0309",
+              "inverse-surface": "#0c0f10",
+              "primary-dim": "#004aba",
+              "tertiary-dim": "#554f6b",
+              "on-tertiary": "#fcf7ff",
+              "surface-container-low": "#f1f4f7",
+              "on-primary": "#f8f7ff",
+              "surface": "#f8f9fb",
+              "secondary-dim": "#485368",
+              "surface-container": "#eaeef2",
+              "on-secondary-fixed": "#354053",
+              "on-surface": "#2b3438",
+              "outline-variant": "#aab3b9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fb; }
+        .font-headline { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        /* Custom scrollbar for calendar grid */
+        .calendar-grid::-webkit-scrollbar { width: 6px; }
+        .calendar-grid::-webkit-scrollbar-track { background: transparent; }
+        .calendar-grid::-webkit-scrollbar-thumb { background: #dbe4ea; border-radius: 10px; }
+    </style>
+</head>
+<body class="text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Shell Wrapper -->
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="hidden md:flex flex-col h-full p-4 gap-2 border-r border-slate-200/20 bg-slate-100 dark:bg-slate-800/50 w-64 docked left-0">
+<div class="mb-6 px-4">
+<div class="flex items-center gap-2 mb-1">
+<img alt="Project Space Icon" class="w-8 h-8 rounded-lg" data-alt="Abstract geometric company logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLP5miau26ds7Rk3-DiOyk9ap7cXgkYL3GGJqnJhvUgC-61NF4PULaVhWX6Z0S5aojBYJylIdqeuM6rGZJWeUnpPTQBToYaw_HTzS3M-9tCFzGYs6ZhkRHVaE5DSTa9ATxQuXQaLJiYEEHWJ-DULQwcOhdM1iwvG3m5vASnHV4tD_9mfDEBWHJSm6WVwrU8OVOApQwJX5uCEwoTt0dn7pO14mKS-DIeNdfyu4DN4eaOs8IrFPamh3so2joPDIZZWcokIb5WPtqGLiK"/>
+<span class="text-lg font-semibold text-slate-900 dark:text-white font-headline">Project Workspace</span>
+</div>
+<p class="text-xs text-on-surface-variant font-medium">Marketing Team</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-sm font-medium">Home</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="text-sm font-medium">Spaces</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-medium">Dashboards</span>
+</a>
+<!-- Active Tab: Calendars -->
+<a class="flex items-center gap-3 bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 rounded-lg px-4 py-2 shadow-sm font-bold scale-98 opacity-95" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="text-sm">Calendars</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="architecture">architecture</span>
+<span class="text-sm font-medium">Blueprints</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-slate-200/20 space-y-1">
+<button class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-primary-dim text-on-primary py-2.5 rounded-md text-sm font-semibold mb-4 transition-transform active:scale-95 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+<span>Create Task</span>
+</button>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="text-sm font-medium">Help</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 dark:text-slate-400 px-4 py-2 hover:bg-slate-200 dark:hover:bg-slate-700/50 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+<span class="text-sm font-medium">Trash</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface overflow-hidden">
+<!-- TopAppBar (Predicted Component) -->
+<header class="flex justify-between items-center px-6 py-3 w-full border-b border-slate-200/20 bg-slate-50 dark:bg-slate-900 docked full-width top-0 z-50">
+<div class="flex items-center gap-8">
+<h1 class="text-xl font-bold text-blue-700 dark:text-blue-400 tracking-tight font-headline">Wrike Kanban</h1>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors" href="#">My Tasks</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors" href="#">Inbox</a>
+<a class="text-slate-500 dark:text-slate-400 font-medium hover:text-blue-600 transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg" data-icon="search">search</span>
+<input class="bg-surface-container-low border-none rounded-full py-1.5 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search tasks..." type="text"/>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span></button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="notes">notes</span></button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-slate-50"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="settings">settings</span></button>
+</div>
+<img alt="User Profile" class="w-8 h-8 rounded-full border-2 border-white shadow-sm" data-alt="Professional user portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLP5miau26ds7Rk3-DiOyk9ap7cXgkYL3GGJqnJhvUgC-61NF4PULaVhWX6Z0S5aojBYJylIdqeuM6rGZJWeUnpPTQBToYaw_HTzS3M-9tCFzGYs6ZhkRHVaE5DSTa9ATxQuXQaLJiYEEHWJ-DULQwcOhdM1iwvG3m5vASnHV4tD_9mfDEBWHJSm6WVwrU8OVOApQwJX5uCEwoTt0dn7pO14mKS-DIeNdfyu4DN4eaOs8IrFPamh3so2joPDIZZWcokIb5WPtqGLiK"/>
+</div>
+</header>
+<!-- Calendar Toolbar -->
+<div class="px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<h2 class="text-2xl font-bold font-headline text-on-surface">October 2023</h2>
+<div class="flex bg-surface-container-low p-1 rounded-lg">
+<button class="px-3 py-1 text-sm font-medium rounded-md hover:bg-white hover:shadow-sm transition-all">Today</button>
+<div class="flex items-center ml-2 border-l border-outline-variant/30 pl-2">
+<button class="p-1 hover:bg-white rounded-md transition-all"><span class="material-symbols-outlined text-lg" data-icon="chevron_left">chevron_left</span></button>
+<button class="p-1 hover:bg-white rounded-md transition-all"><span class="material-symbols-outlined text-lg" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<!-- Filters -->
+<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-outline-variant/20 shadow-sm">
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Project:</span>
+<select class="border-none bg-transparent text-sm py-0 pl-0 pr-8 focus:ring-0 font-medium">
+<option>All Projects</option>
+<option>Website Redesign</option>
+<option>Product Launch</option>
+</select>
+</div>
+<div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-outline-variant/20 shadow-sm">
+<span class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Status:</span>
+<select class="border-none bg-transparent text-sm py-0 pl-0 pr-8 focus:ring-0 font-medium">
+<option>All Status</option>
+<option>Pendiente</option>
+<option>En Proceso</option>
+<option>En Revisión</option>
+<option>Finalizado</option>
+</select>
+</div>
+<div class="bg-surface-container-low p-1 rounded-lg flex">
+<button class="px-4 py-1.5 text-sm font-semibold rounded-md bg-white shadow-sm text-primary">Month</button>
+<button class="px-4 py-1.5 text-sm font-medium rounded-md text-on-surface-variant hover:bg-white transition-all">Week</button>
+</div>
+</div>
+</div>
+<!-- Calendar Content -->
+<div class="flex-1 flex px-6 pb-6 gap-6 min-h-0">
+<!-- Main Grid -->
+<div class="flex-1 bg-surface-container-low rounded-xl flex flex-col overflow-hidden border border-outline-variant/10 shadow-sm">
+<!-- Days of Week -->
+<div class="grid grid-cols-7 border-b border-outline-variant/20">
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Sun</div>
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Mon</div>
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Tue</div>
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Wed</div>
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Thu</div>
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Fri</div>
+<div class="py-3 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest font-headline">Sat</div>
+</div>
+<!-- Date Grid -->
+<div class="flex-1 grid grid-cols-7 grid-rows-5 overflow-auto calendar-grid">
+<!-- Empty leading days (Sept) -->
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-medium text-outline opacity-50">26</span>
+</div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-medium text-outline opacity-50">27</span>
+</div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-medium text-outline opacity-50">28</span>
+</div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-medium text-outline opacity-50">29</span>
+</div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-medium text-outline opacity-50">30</span>
+</div>
+<!-- October Days -->
+<!-- Day 1 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-semibold text-on-surface">1</span>
+</div>
+<!-- Day 2 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10 space-y-1">
+<span class="text-sm font-semibold text-on-surface">2</span>
+<div class="bg-slate-200/50 border-l-4 border-slate-400 p-1.5 rounded-r-md">
+<p class="text-[10px] font-bold text-slate-700 truncate">Quarterly Review</p>
+<p class="text-[9px] text-slate-500">Pendiente</p>
+</div>
+</div>
+<!-- Day 3 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-semibold text-on-surface">3</span>
+</div>
+<!-- Day 4 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10 space-y-1">
+<span class="text-sm font-semibold text-on-surface">4</span>
+<div class="bg-blue-100 border-l-4 border-primary p-1.5 rounded-r-md">
+<p class="text-[10px] font-bold text-primary truncate">Dev Meeting</p>
+<p class="text-[9px] text-blue-700">En Proceso</p>
+</div>
+</div>
+<!-- Day 5 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-semibold text-on-surface">5</span>
+</div>
+<!-- Day 6 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10 space-y-1">
+<span class="text-sm font-semibold text-on-surface">6</span>
+<div class="bg-orange-100 border-l-4 border-orange-500 p-1.5 rounded-r-md">
+<p class="text-[10px] font-bold text-orange-800 truncate">Asset Approval</p>
+<p class="text-[9px] text-orange-600">En Revisión</p>
+</div>
+</div>
+<!-- Day 7 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10">
+<span class="text-sm font-semibold text-on-surface">7</span>
+</div>
+<!-- Week 2 -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">8</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10 space-y-1">
+<span class="text-sm font-semibold text-on-surface">9</span>
+<div class="bg-green-100 border-l-4 border-green-600 p-1.5 rounded-r-md">
+<p class="text-[10px] font-bold text-green-800 truncate">Client Onboarding</p>
+<p class="text-[9px] text-green-600">Finalizado</p>
+</div>
+</div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">10</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">11</span></div>
+<!-- Highlight Today -->
+<div class="min-h-[120px] bg-primary/5 p-2 border-r border-b border-primary/20 ring-2 ring-primary/20 z-10 space-y-1">
+<span class="w-7 h-7 flex items-center justify-center text-sm font-bold bg-primary text-white rounded-full">12</span>
+<div class="bg-blue-100 border-l-4 border-primary p-1.5 rounded-r-md">
+<p class="text-[10px] font-bold text-primary truncate">Wrike Sync Task</p>
+<p class="text-[9px] text-blue-700">En Proceso</p>
+</div>
+</div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">13</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">14</span></div>
+<!-- Week 3 Fillers -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">15</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10 space-y-1">
+<span class="text-sm font-semibold text-on-surface">16</span>
+<div class="bg-slate-200/50 border-l-4 border-slate-400 p-1.5 rounded-r-md">
+<p class="text-[10px] font-bold text-slate-700 truncate">Backup Server</p>
+</div>
+</div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">17</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">18</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">19</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">20</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">21</span></div>
+<!-- Continue Grid to end -->
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">22</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">23</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">24</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">25</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">26</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">27</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">28</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">29</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">30</span></div>
+<div class="min-h-[120px] bg-white p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-semibold text-on-surface">31</span></div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-medium text-outline opacity-50">1</span></div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-medium text-outline opacity-50">2</span></div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-medium text-outline opacity-50">3</span></div>
+<div class="min-h-[120px] bg-surface-dim/30 p-2 border-r border-b border-outline-variant/10"><span class="text-sm font-medium text-outline opacity-50">4</span></div>
+</div>
+</div>
+<!-- Right Sidebar / Legend -->
+<aside class="w-72 hidden xl:flex flex-col gap-6">
+<!-- Status Legend -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant/10 shadow-sm">
+<h3 class="text-sm font-bold font-headline mb-4 text-on-surface">Status Legend</h3>
+<ul class="space-y-3">
+<li class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-slate-400"></span>
+<span class="text-sm font-medium text-on-surface-variant">Pendiente</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-primary"></span>
+<span class="text-sm font-medium text-on-surface-variant">En Proceso</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-orange-500"></span>
+<span class="text-sm font-medium text-on-surface-variant">En Revisión</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="w-3 h-3 rounded-full bg-green-600"></span>
+<span class="text-sm font-medium text-on-surface-variant">Finalizado</span>
+</li>
+</ul>
+</div>
+<!-- Upcoming Tasks List -->
+<div class="bg-white p-5 rounded-xl border border-outline-variant/10 shadow-sm flex-1 overflow-hidden flex flex-col">
+<h3 class="text-sm font-bold font-headline mb-4 text-on-surface">Upcoming Syncs</h3>
+<div class="space-y-4 overflow-auto pr-2">
+<div class="p-3 rounded-lg bg-surface-container-low">
+<p class="text-xs font-semibold text-primary mb-1">Oct 14</p>
+<p class="text-sm font-bold leading-tight mb-1">UI/UX Polish Phase</p>
+<div class="flex items-center gap-2">
+<img alt="Avatar" class="w-4 h-4 rounded-full" data-alt="Small team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLP5miau26ds7Rk3-DiOyk9ap7cXgkYL3GGJqnJhvUgC-61NF4PULaVhWX6Z0S5aojBYJylIdqeuM6rGZJWeUnpPTQBToYaw_HTzS3M-9tCFzGYs6ZhkRHVaE5DSTa9ATxQuXQaLJiYEEHWJ-DULQwcOhdM1iwvG3m5vASnHV4tD_9mfDEBWHJSm6WVwrU8OVOApQwJX5uCEwoTt0dn7pO14mKS-DIeNdfyu4DN4eaOs8IrFPamh3so2joPDIZZWcokIb5WPtqGLiK"/>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tight">Wrike ID: 82910</span>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low opacity-75">
+<p class="text-xs font-semibold text-orange-500 mb-1">Oct 16</p>
+<p class="text-sm font-bold leading-tight mb-1">Backend Optimization</p>
+<div class="flex items-center gap-2">
+<img alt="Avatar" class="w-4 h-4 rounded-full" data-alt="Small team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLP5miau26ds7Rk3-DiOyk9ap7cXgkYL3GGJqnJhvUgC-61NF4PULaVhWX6Z0S5aojBYJylIdqeuM6rGZJWeUnpPTQBToYaw_HTzS3M-9tCFzGYs6ZhkRHVaE5DSTa9ATxQuXQaLJiYEEHWJ-DULQwcOhdM1iwvG3m5vASnHV4tD_9mfDEBWHJSm6WVwrU8OVOApQwJX5uCEwoTt0dn7pO14mKS-DIeNdfyu4DN4eaOs8IrFPamh3so2joPDIZZWcokIb5WPtqGLiK"/>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tight">Wrike ID: 90212</span>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-low opacity-75">
+<p class="text-xs font-semibold text-slate-400 mb-1">Oct 20</p>
+<p class="text-sm font-bold leading-tight mb-1">Final Stakeholder Meeting</p>
+<div class="flex items-center gap-2">
+<img alt="Avatar" class="w-4 h-4 rounded-full" data-alt="Small team member avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLP5miau26ds7Rk3-DiOyk9ap7cXgkYL3GGJqnJhvUgC-61NF4PULaVhWX6Z0S5aojBYJylIdqeuM6rGZJWeUnpPTQBToYaw_HTzS3M-9tCFzGYs6ZhkRHVaE5DSTa9ATxQuXQaLJiYEEHWJ-DULQwcOhdM1iwvG3m5vASnHV4tD_9mfDEBWHJSm6WVwrU8OVOApQwJX5uCEwoTt0dn7pO14mKS-DIeNdfyu4DN4eaOs8IrFPamh3so2joPDIZZWcokIb5WPtqGLiK"/>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tight">Wrike ID: 88721</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Project Info -->
+<div class="bg-gradient-to-br from-blue-600 to-blue-800 p-5 rounded-xl text-white shadow-lg">
+<h4 class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">Sync Status</h4>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-sm" data-icon="cloud_done">cloud_done</span>
+<span class="text-sm font-semibold">Live with Wrike</span>
+</div>
+<p class="text-[11px] leading-relaxed opacity-90">Last synchronized 4 minutes ago. All local kanban statuses updated from main workspace.</p>
+</div>
+</aside>
+</div>
+</main>
+</div>
+<!-- BottomNavBar for Mobile (Predicted Component) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200/20 px-6 py-2 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="text-[10px] font-medium">Spaces</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-blue-700" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="text-[10px] font-bold">Calendar</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="text-[10px] font-medium">Alerts</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-500" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[10px] font-medium">Settings</span>
+</a>
+</nav>
+</body></html>
