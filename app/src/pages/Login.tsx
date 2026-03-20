@@ -23,11 +23,6 @@ const Login: React.FC = () => {
         window.location.href = authUrl;
     };
 
-    const handleLogin = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Fallback for simple demo login
-        navigate('/dashboard');
-    };
 
     return (
         <main className="flex-grow flex items-center justify-center p-6 relative overflow-hidden bg-surface min-h-screen">
@@ -51,46 +46,13 @@ const Login: React.FC = () => {
                             <span className="material-symbols-outlined">login</span>
                             <span>Log in with Wrike</span>
                         </button>
-                        <button type="button" className="w-full flex items-center justify-center gap-3 bg-surface-container-lowest text-on-surface font-semibold py-3.5 px-6 rounded-lg shadow-sm border border-outline-variant/20 hover:bg-surface-container-low transition-all active:scale-[0.98]">
-                            <img alt="Google G logo for authentication" className="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A" />
-                            <span>Log in with Google</span>
+                        <button type="button" disabled className="w-full flex items-center justify-center gap-3 bg-surface-container-lowest text-on-surface/40 font-semibold py-3.5 px-6 rounded-lg border border-outline-variant/10 cursor-not-allowed grayscale transition-all">
+                            <img alt="Google G logo for authentication" className="w-5 h-5 opacity-40" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSDFh-U9jZT52AvTOMP5W7wR6HhXK1UEbkYSHB9qvWz7Dqa35u7hjinwOzKIYQF92mZ9FFJFqeP2AsUu3T__yUEOxVcGwxARQj6TpZXuORF3uykvGkWBd_ct8lLLXianayNuLSWkRavC6KRLYpMIjozKffdRu1-L_nDN9T0U6Q8m-Eg9qC5J7eASiL4x4FUM_d3BMYieZ8by7tJbwYw-9UYAD4PfNOcOWrrl8Ql8dWWtvv7rGC65Sqax1f0DmvLoxQ5oucp4lqao-A" />
+                            <span>Log in with Google (Soon)</span>
                         </button>
                     </div>
-                    <div className="relative my-8 text-center">
-                        <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-outline-variant/30"></div>
-                        </div>
-                        <span className="relative px-4 bg-transparent text-on-surface-variant text-xs font-bold uppercase tracking-widest">or secure sign in</span>
-                    </div>
-                    <form className="space-y-5" onSubmit={handleLogin}>
-                        <div>
-                            <label className="block text-sm font-semibold text-on-surface mb-1.5 ml-1" htmlFor="email">Work Email</label>
-                            <input className="w-full bg-surface-container-lowest border-0 border-b-2 border-outline-variant/20 focus:border-primary focus:ring-0 transition-all px-4 py-3 rounded-t-lg placeholder:text-outline-variant/60" id="email" name="email" placeholder="name@company.com" type="email" />
-                        </div>
-                        <div>
-                            <div className="flex justify-between items-center mb-1.5 ml-1">
-                                <label className="block text-sm font-semibold text-on-surface" htmlFor="password">Password</label>
-                                <a className="text-xs font-bold text-primary hover:text-primary-dim transition-colors" href="#">Forgot?</a>
-                            </div>
-                            <input className="w-full bg-surface-container-lowest border-0 border-b-2 border-outline-variant/20 focus:border-primary focus:ring-0 transition-all px-4 py-3 rounded-t-lg placeholder:text-outline-variant/60" id="password" name="password" placeholder="••••••••" type="password" />
-                        </div>
-                        <div className="flex items-center gap-2 ml-1">
-                            <input className="w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary" id="remember" type="checkbox" />
-                            <label className="text-xs font-medium text-on-surface-variant" htmlFor="remember">Remember this device for 30 days</label>
-                        </div>
-                        <button className="w-full bg-secondary-container text-on-secondary-container font-bold py-3 px-6 rounded-lg hover:bg-secondary-fixed transition-colors" type="submit">
-                            Continue to Dashboard
-                        </button>
-                    </form>
                 </div>
                 <div className="mt-8 flex flex-col items-center gap-4">
-                    <div className="flex items-center gap-6 text-xs font-bold text-outline uppercase tracking-widest">
-                        <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-                        <span className="w-1 h-1 bg-outline-variant rounded-full"></span>
-                        <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-                        <span className="w-1 h-1 bg-outline-variant rounded-full"></span>
-                        <a className="hover:text-primary transition-colors" href="#">Security</a>
-                    </div>
                     <div className="flex items-center gap-2 text-on-surface-variant/60">
                         <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
                         <span className="text-[10px] font-medium">Enterprise-grade 256-bit SSL Encryption</span>
@@ -99,7 +61,7 @@ const Login: React.FC = () => {
             </div>
             
             <footer className="absolute bottom-6 p-6 text-center text-[10px] font-bold text-outline-variant uppercase tracking-widest w-full pointer-events-none">
-                © 2024 Wrike Kanban Viewer. Azure Horizon Design System.
+                © 2026 TaskWrike. Made by Sergio Tijero.
             </footer>
         </main>
     );
