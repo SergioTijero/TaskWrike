@@ -60,6 +60,7 @@ jobs:
           APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'TaskWrike ${{ github.ref_name }}'
@@ -67,3 +68,4 @@ jobs:
           releaseDraft: false
           prerelease: false
           projectPath: ./app
+          args: --notarize
