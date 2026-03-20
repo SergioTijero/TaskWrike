@@ -14,6 +14,8 @@ const OAuthCallback: React.FC = () => {
             const code = searchParams.get('code');
             const error = searchParams.get('error');
 
+            console.log("OAuth Callback Triggered", { hasCode: !!code, hasError: !!error, url: window.location.href });
+
             if (error) {
                 console.error("Autenticación cancelada o fallida", error);
                 setStatusText("Autenticación cancelada");
@@ -28,12 +30,16 @@ const OAuthCallback: React.FC = () => {
                     const clientSecret = import.meta.env.VITE_WRIKE_CLIENT_SECRET;
                     
                     if (!clientId || !clientSecret) {
+                        const msg = "Error: Faltan variables de entorno (Client ID/Secret) en el build.";
+                        console.error(msg);
+                        alert(msg);
                         setStatusText("Falta Configuración");
                         setStatusDesc("Por favor agrega tu Client ID y Secret en el archivo .env");
                         setIsError(true);
                         return;
                     }
 
+                    console.log("Intercambiando código por token...");
                     const response = await fetch('https://login.wrike.com/oauth2/token', {
                         method: 'POST',
                         headers: {
@@ -51,29 +57,35 @@ const OAuthCallback: React.FC = () => {
                     const data = await response.json();
                     
                     if (data.access_token) {
+                        console.log("Login Exitoso!", { has_token: !!data.access_token });
                         localStorage.setItem('wrike_access_token', data.access_token);
                         localStorage.setItem('wrike_refresh_token', data.refresh_token);
                         if (data.host) {
                             localStorage.setItem('wrike_host', data.host);
                         }
                         window.dispatchEvent(new Event('storage'));
+                        window.dispatchEvent(new Event('auth-change'));
                         
                         setTimeout(() => {
                            navigate('/dashboard');
-                        }, 500); // Dar 500ms de retraso para que React Router capture el setIsAuthenticated antes del redirect
+                        }, 500); 
                     } else {
+                        const errorMsg = "Wrike dice: " + (data.error_description || data.error || "Error desconocido");
                         console.error("Token no recibido", data);
+                        alert(errorMsg);
                         setStatusText("Error validando token");
-                        setStatusDesc(data.error_description || JSON.stringify(data));
+                        setStatusDesc(errorMsg);
                         setIsError(true);
                     }
                 } catch (err: any) {
                     console.error("Error validando el código OAuth", err);
+                    alert("Error de conexión: " + err.message);
                     setStatusText("Error de red o conexión");
                     setStatusDesc(String(err) || "Fallo en la conexión.");
                     setIsError(true);
                 }
             } else {
+                console.log("No se encontró código en la URL, redirigiendo a login...");
                 navigate('/login');
             }
         };
