@@ -62,6 +62,9 @@ jobs:
           APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_PROVIDER_SHORT_NAME: ${{ secrets.APPLE_TEAM_ID }}
+          VITE_WRIKE_CLIENT_ID: ${{ secrets.VITE_WRIKE_CLIENT_ID }}
+          VITE_WRIKE_CLIENT_SECRET: ${{ secrets.VITE_WRIKE_CLIENT_SECRET }}
+          VITE_WRIKE_REDIRECT_URI: ${{ secrets.VITE_WRIKE_REDIRECT_URI }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'TaskWrike ${{ github.ref_name }}'
