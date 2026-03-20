@@ -31,15 +31,17 @@ tauriConfig.version = version;
 fs.writeFileSync(tauriConfigPath, `${JSON.stringify(tauriConfig, null, 2)}\n`);
 
 const cargoToml = fs.readFileSync(cargoTomlPath, 'utf8');
-const updatedCargoToml = cargoToml.replace(
-  /^version = ".*"$/m,
-  `version = "${version}"`,
-);
+const cargoVersionPattern = /^version = ".*"$/m;
 
-if (cargoToml === updatedCargoToml) {
-  console.error('Could not update Cargo.toml version.');
+if (!cargoVersionPattern.test(cargoToml)) {
+  console.error('Could not find Cargo.toml package version.');
   process.exit(1);
 }
+
+const updatedCargoToml = cargoToml.replace(
+  cargoVersionPattern,
+  `version = "${version}"`,
+);
 
 fs.writeFileSync(cargoTomlPath, updatedCargoToml);
 
