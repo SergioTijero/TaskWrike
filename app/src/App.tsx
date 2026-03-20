@@ -8,6 +8,7 @@ import ReportsPage from './pages/ReportsPage';
 import InboxPage from './pages/InboxPage';
 import SettingsPage from './pages/SettingsPage';
 import { useEffect, useState } from 'react';
+import { isTauriDesktopRuntime } from './utils/wrikeAuth';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -17,9 +18,30 @@ function App() {
       const token = localStorage.getItem('wrike_access_token') || import.meta.env.VITE_WRIKE_PERMANENT_TOKEN;
       setIsAuthenticated(!!token && token !== 'undefined');
     };
+    let isDisposed = false;
+    let unlistenTauriAuth: (() => void) | null = null;
+
     checkAuth();
     window.addEventListener('storage', checkAuth);
-    return () => window.removeEventListener('storage', checkAuth);
+
+    if (isTauriDesktopRuntime()) {
+      void import('@tauri-apps/api/event')
+        .then(({ listen }) => listen('wrike-auth-success', checkAuth))
+        .then((unlisten) => {
+          if (isDisposed) {
+            unlisten();
+            return;
+          }
+          unlistenTauriAuth = unlisten;
+        })
+        .catch(() => {});
+    }
+
+    return () => {
+      isDisposed = true;
+      window.removeEventListener('storage', checkAuth);
+      unlistenTauriAuth?.();
+    };
   }, []);
 
   if (isAuthenticated === null) return null;

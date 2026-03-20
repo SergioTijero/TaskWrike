@@ -24,6 +24,9 @@ const Login: React.FC = () => {
         oauthMissingConfig: lang === 'es'
             ? 'Falta configurar el Client ID de Wrike en esta build.'
             : 'This build is missing the Wrike Client ID configuration.',
+        oauthWindowError: lang === 'es'
+            ? 'No pude abrir la ventana de login de Wrike en la app de escritorio.'
+            : 'I could not open the Wrike login window in the desktop app.',
         tokenTitle: lang === 'es' ? 'Entrar con Permanent Token' : 'Sign in with Permanent Token',
         tokenSubtitle: lang === 'es'
             ? 'Usalo en la app de escritorio mientras configuramos un callback OAuth real para produccion.'
@@ -42,7 +45,7 @@ const Login: React.FC = () => {
             : 'Wrike rejected the token or configured host.',
     };
 
-    const handleOAuthLogin = () => {
+    const handleOAuthLogin = async () => {
         const clientId = import.meta.env.VITE_WRIKE_CLIENT_ID;
 
         if (!clientId || clientId === 'TU_CLIENT_ID_DE_WRIKE_AQUI') {
@@ -56,7 +59,35 @@ const Login: React.FC = () => {
         }
 
         setManualError('');
-        window.location.href = `https://login.wrike.com/oauth2/authorize/v4?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}`;
+        const authUrl = `https://login.wrike.com/oauth2/authorize/v4?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+        if (isTauriDesktopRuntime()) {
+            try {
+                const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow');
+                const existingWindow = await WebviewWindow.getByLabel('wrike-oauth');
+                await existingWindow?.close();
+
+                const oauthWindow = new WebviewWindow('wrike-oauth', {
+                    url: authUrl,
+                    title: 'Wrike Login',
+                    width: 920,
+                    height: 760,
+                    center: true,
+                    focus: true,
+                    resizable: true,
+                });
+
+                void oauthWindow.once('tauri://error', () => {
+                    setManualError(copy.oauthWindowError);
+                });
+                return;
+            } catch (error) {
+                setManualError(error instanceof Error ? error.message : copy.oauthWindowError);
+                return;
+            }
+        }
+
+        window.location.href = authUrl;
     };
 
     const handleManualLogin = async () => {

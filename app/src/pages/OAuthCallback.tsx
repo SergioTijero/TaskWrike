@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getWrikeRedirectUri } from '../utils/wrikeAuth';
+import { getWrikeRedirectUri, isTauriDesktopRuntime } from '../utils/wrikeAuth';
 
 const OAuthCallback: React.FC = () => {
     const navigate = useNavigate();
@@ -67,10 +67,33 @@ const OAuthCallback: React.FC = () => {
                         }
                         window.dispatchEvent(new Event('storage'));
                         window.dispatchEvent(new Event('auth-change'));
-                        
+
+                        if (isTauriDesktopRuntime()) {
+                            try {
+                                const [{ emit }, { getCurrentWebviewWindow }] = await Promise.all([
+                                    import('@tauri-apps/api/event'),
+                                    import('@tauri-apps/api/webviewWindow'),
+                                ]);
+
+                                await emit('wrike-auth-success');
+                                const currentWindow = getCurrentWebviewWindow();
+
+                                if (currentWindow.label === 'wrike-oauth') {
+                                    setStatusText('Login exitoso');
+                                    setStatusDesc('Volviendo a la app principal...');
+                                    setTimeout(() => {
+                                        void currentWindow.close();
+                                    }, 500);
+                                    return;
+                                }
+                            } catch (eventError) {
+                                console.error('No se pudo sincronizar el login entre ventanas', eventError);
+                            }
+                        }
+
                         setTimeout(() => {
                            navigate('/dashboard');
-                        }, 500); 
+                        }, 500);
                     } else {
                         const errorMsg = "Wrike dice: " + (data.error_description || data.error || "Error desconocido");
                         console.error("Token no recibido", data);
