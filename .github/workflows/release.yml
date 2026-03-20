@@ -51,6 +51,9 @@ jobs:
       - name: Install dependencies
         run: cd app && npm install
 
+      - name: Sync app version from tag
+        run: cd app && node ./scripts/sync-version.mjs "${{ github.ref_name }}"
+
       - name: Build Tauri app
         uses: tauri-apps/tauri-action@v0
         env:
@@ -64,7 +67,7 @@ jobs:
           APPLE_PROVIDER_SHORT_NAME: ${{ secrets.APPLE_TEAM_ID }}
           VITE_WRIKE_CLIENT_ID: ${{ secrets.VITE_WRIKE_CLIENT_ID }}
           VITE_WRIKE_CLIENT_SECRET: ${{ secrets.VITE_WRIKE_CLIENT_SECRET }}
-          VITE_WRIKE_REDIRECT_URI: ${{ secrets.VITE_WRIKE_REDIRECT_URI }}
+          VITE_WRIKE_REDIRECT_URI: https://tauri.localhost/oauth/callback
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'TaskWrike ${{ github.ref_name }}'

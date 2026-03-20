@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getWrikeRedirectUri } from '../utils/wrikeAuth';
 
 const OAuthCallback: React.FC = () => {
     const navigate = useNavigate();
@@ -28,6 +29,7 @@ const OAuthCallback: React.FC = () => {
                 try {
                     const clientId = import.meta.env.VITE_WRIKE_CLIENT_ID;
                     const clientSecret = import.meta.env.VITE_WRIKE_CLIENT_SECRET;
+                    const redirectUri = getWrikeRedirectUri();
                     
                     if (!clientId || !clientSecret) {
                         const msg = "Error: Faltan variables de entorno (Client ID/Secret) en el build.";
@@ -50,7 +52,7 @@ const OAuthCallback: React.FC = () => {
                             client_secret: clientSecret,
                             grant_type: 'authorization_code',
                             code: code,
-                            redirect_uri: import.meta.env.VITE_WRIKE_REDIRECT_URI || "http://localhost:5173/oauth/callback"
+                            redirect_uri: redirectUri
                         }).toString(),
                     });
 

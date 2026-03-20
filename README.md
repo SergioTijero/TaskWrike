@@ -76,6 +76,14 @@ VITE_WRIKE_REDIRECT_URI=http://localhost:5173/oauth/callback
 VITE_WRIKE_PERMANENT_TOKEN=your_permanent_token
 ```
 
+For desktop releases built with Tauri, the OAuth callback should be:
+
+```text
+https://tauri.localhost/oauth/callback
+```
+
+That redirect URI can stay public in CI. Only the client ID and client secret need to remain private.
+
 > **Where to get these:** [Wrike API Apps](https://www.wrike.com/frontend/apps/index.html) → Create new app → OAuth 2.0
 
 ### 3. Run in development
@@ -93,6 +101,9 @@ npm run tauri dev
 cd app
 npm run tauri build
 ```
+
+GitHub releases built from tags automatically sync the desktop app version from the tag name.
+Example: pushing `v0.2.3` will produce a bundle whose app version is `0.2.3`.
 
 Output appears in `app/src-tauri/target/release/bundle/`:
 
